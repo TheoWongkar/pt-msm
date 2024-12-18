@@ -13,11 +13,18 @@ return new class extends Migration
     {
         Schema::create('kpis', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('employee_id')->constrained('employees', indexName: 'kpis_employee_id')->onDelete('cascade');
+            $table->string('description');
+            $table->integer('weight');
+            $table->integer('rating');
+            $table->float('value');
             $table->timestamps();
         });
 
         Schema::create('kpi_totals', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('employee_id')->constrained('employees', indexName: 'kpi_totals_employee_id')->onDelete('cascade');
+            $table->float('value');
             $table->timestamps();
         });
     }
