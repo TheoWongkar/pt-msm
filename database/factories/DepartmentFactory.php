@@ -21,13 +21,18 @@ class DepartmentFactory extends Factory
     public function definition(): array
     {
         $departments = ['IT', 'HR', 'Finance', 'Marketing'];
+        $colors = ['#ff0000', '#00ff00', '#0000ff', '#ffffff'];
 
         $index = session('department_index', 0);
+
         $name = $departments[$index];
+        $color = $colors[$index];
+
         session(['department_index' => ($index + 1) % count($departments)]);
 
         return [
             'name' => $name,
+            'color' => $color,
         ];
     }
 }
