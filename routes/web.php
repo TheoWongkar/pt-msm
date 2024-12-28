@@ -15,4 +15,6 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+    Route::get('departemen', [DepartmentController::class, 'index'])->name('department.index');
 });
