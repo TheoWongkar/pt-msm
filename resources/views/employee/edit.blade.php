@@ -73,18 +73,56 @@
                     </div>
 
                     <!-- Foto Profil -->
-                    <div x-data="{ previewUrl: '{{ $employee->profile_picture ? asset('storage/' . $employee->profile_picture) : '' }}' }">
-                        <label for="profile_picture" class="block text-sm font-medium text-gray-400">Foto Profil</label>
-                        <div x-show="previewUrl" class="mt-2">
-                            <img :src="previewUrl" alt="Preview Gambar"
-                                class="w-32 h-32 object-cover rounded-sm border border-gray-300">
-                        </div>
+                    <div x-data="{
+                        previewUrl: '{{ old('profile_picture', asset('storage/' . $employee->profile_picture ?? '')) }}',
+                        isImageChanged: false
+                    }" class="space-y-4">
+                        <!-- Label -->
+                        <label for="profile_picture" class="block text-sm font-medium text-gray-200">Edit Foto
+                            Profil</label>
+
+                        <!-- Input File -->
                         <input type="file" id="profile_picture" name="profile_picture"
-                            x-on:change="previewUrl = URL.createObjectURL($event.target.files[0])"
-                            class="mt-1 w-full text-gray-200">
+                            x-on:change="
+                            previewUrl = URL.createObjectURL($event.target.files[0]); 
+                            isImageChanged = true;
+                        "
+                            class="block w-full text-sm text-gray-200 bg-gray-800 border border-gray-600 rounded-md cursor-pointer file:bg-gray-700 file:border-none file:rounded-md file:px-4 file:py-2 file:text-sm file:font-medium file:text-gray-200 hover:file:bg-gray-600">
+
+                        <!-- Error Message -->
                         @error('profile_picture')
                             <span class="text-sm text-red-500">{{ $message }}</span>
                         @enderror
+
+                        <!-- Area Preview -->
+                        <div class="relative group">
+                            <!-- Preview Image -->
+                            <div x-show="previewUrl" class="w-32 h-32 border border-gray-600 overflow-hidden">
+                                <img :src="isImageChanged ? previewUrl :
+                                    '{{ asset('storage/' . $employee->profile_picture) ?? '' }}'"
+                                    alt="Preview Gambar"
+                                    class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105">
+                            </div>
+
+                            <!-- Placeholder -->
+                            <div x-show="!previewUrl"
+                                class="w-32 h-32 border-2 border-dashed border-gray-400 flex items-center justify-center">
+                                <span class="text-sm text-gray-400">Preview Gambar</span>
+                            </div>
+                        </div>
+
+                        <!-- Button Actions -->
+                        <div class="flex items-center">
+                            <button type="button"
+                                x-on:click="
+                                previewUrl = '{{ $user->profile_picture_url ?? '' }}'; 
+                                isImageChanged = false;
+                                $refs.fileInput.value = '';
+                            "
+                                class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-500">
+                                Reset
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -243,7 +281,8 @@
                     class="inline-block px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">
                     Batal
                 </a>
-                <button type="submit" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                <button type="submit" onclick="return confirm('Apakah Anda yakin ingin mengubah data?')"
+                    class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
                     Simpan
                 </button>
             </div>

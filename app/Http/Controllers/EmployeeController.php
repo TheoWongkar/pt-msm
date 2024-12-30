@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use App\Models\Department;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -150,14 +151,12 @@ class EmployeeController extends Controller
             'user_role' => 'required|string|in:user,admin,operator',
         ]);
 
-        // Store profile picture if provided
-        $profilePicturePath = $employee->profile_picture; // Keep existing picture if none provided
         if ($request->hasFile('profile_picture')) {
-            // Delete the old profile picture from storage if exists
-            if ($profilePicturePath && Storage::exists('public/' . $profilePicturePath)) {
-                Storage::delete('public/' . $profilePicturePath);
+            if ($employee->profile_picture) {
+                Storage::disk('public')->delete($employee->profile_picture);
             }
             $profilePicturePath = $request->file('profile_picture')->store('profile_pictures', 'public');
+            $employee->profile_picture = $profilePicturePath;
         }
 
         // Update employee data
@@ -192,6 +191,10 @@ class EmployeeController extends Controller
     public function destroy(string $id)
     {
         $employee = Employee::findOrFail($id);
+
+        if ($employee->profile_picture) {
+            Storage::disk('public')->delete($employee->profile_picture);
+        }
 
         $employee->delete();
 
