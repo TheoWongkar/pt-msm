@@ -143,7 +143,9 @@
                                         @csrf
                                         @method('delete')
                                         <!-- Hapus Button -->
-                                        <button type="submit" class="font-medium text-red-600 hover:underline">
+                                        <button type="submit"
+                                            onclick="return confirm('Hal ini dapat menghapus data secara permanen. Apakah Anda yakin ingin menghapus data?')"
+                                            class="font-medium text-red-600 hover:underline">
                                             <span>Hapus</span>
                                         </button>
                                     </form>
