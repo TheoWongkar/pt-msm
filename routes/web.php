@@ -18,7 +18,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::get('karyawan', [EmployeeController::class, 'index'])->name('employee.index');
-    Route::get('karyawan/{id}', [EmployeeController::class, 'show'])->name('employee.show');
+    Route::get('karyawan/lihat/{id}', [EmployeeController::class, 'show'])->name('employee.show');
     Route::get('karyawan/tambah', [EmployeeController::class, 'create'])->name('employee.create');
     Route::post('karyawan/tambah', [EmployeeController::class, 'store'])->name('employee.store');
     Route::get('karyawan/ubah/{id}', [EmployeeController::class, 'edit'])->name('employee.edit');

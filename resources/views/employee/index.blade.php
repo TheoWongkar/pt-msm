@@ -44,7 +44,7 @@
                     <!-- Input Field -->
                     <input type="text" name="search"
                         class="h-10 px-3 rounded-l-lg bg-gray-700 text-white placeholder-gray-400 flex-grow md:w-56 focus:outline-none"
-                        placeholder="Cari Departemen..." autocomplete="off" value="{{ request()->get('search') }}">
+                        placeholder="Cari Nama Karyawan..." autocomplete="off" value="{{ request()->get('search') }}">
 
                     <!-- Button -->
                     <button type="submit"

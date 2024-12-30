@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Models\Department;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class EmployeeController extends Controller
 {
@@ -33,7 +36,9 @@ class EmployeeController extends Controller
      */
     public function create()
     {
-        return view('employee.create');
+        $departments = Department::all();
+
+        return view('employee.create', compact('departments'));
     }
 
     /**
@@ -41,14 +46,57 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:50|unique:departments',
-            'color' => 'required|string|max:50|unique:departments',
+        $request->validate([
+            // Employee validations
+            'department_id' => 'required|exists:departments,id',
+            'nik' => 'required|string|max:20|unique:employees,nik',
+            'name' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:13',
+            'address' => 'required|string',
+            'date_of_entry' => 'required|date',
+            'date_of_birth' => 'required|date',
+            'position' => 'required|string|max:30',
+            'gender' => 'required|string|in:Pria,Wanita',
+            'employee_status' => 'required|boolean',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+
+            // User validations
+            'user_name' => 'required|string|max:255|unique:users,name',
+            'user_email' => 'required|string|email|max:255|unique:users,email',
+            'user_password' => 'required|string|min:8|confirmed',
+            'user_role' => 'required|string|in:user,admin,operator',
         ]);
 
-        Employee::create($validated);
+        // Store profile picture
+        $profilePicturePath = null;
+        if ($request->hasFile('profile_picture')) {
+            $profilePicturePath = $request->file('profile_picture')->store('profile_pictures', 'public');
+        }
 
-        return redirect()->route('department.index')->with('success', 'Departemen berhasil ditambahkan');
+        // Create employee and associate with the user
+        $employee = Employee::create([
+            'department_id' => $request->department_id,
+            'nik' => $request->nik,
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'date_of_entry' => $request->date_of_entry,
+            'date_of_birth' => $request->date_of_birth,
+            'position' => $request->position,
+            'gender' => $request->gender,
+            'employee_status' => $request->employee_status,
+            'profile_picture' => $profilePicturePath,
+        ]);
+
+        // Create user and associate employee
+        $employee->user()->create([
+            'name' => $request->user_name,
+            'email' => $request->user_email,
+            'password' => Hash::make($request->user_password),
+            'role' => $request->user_role,
+        ]);
+
+        return redirect()->route('employee.index')->with('success', 'Karyawan berhasil ditambahkan');
     }
 
     /**
@@ -56,7 +104,7 @@ class EmployeeController extends Controller
      */
     public function show(string $id)
     {
-        $employee = Employee::with('department')->findOrFail($id);
+        $employee = Employee::with('user', 'department')->findOrFail($id);
 
         return view('employee.show', compact('employee'));
     }
@@ -66,9 +114,10 @@ class EmployeeController extends Controller
      */
     public function edit(string $id)
     {
-        $department = Employee::findOrFail($id);
+        $employee = Employee::with('user')->findOrFail($id);
+        $departments = Department::all();
 
-        return view('department.edit', compact('department'));
+        return view('employee.edit', compact('employee', 'departments'));
     }
 
     /**
@@ -76,16 +125,65 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:50|unique:departments,name,' . $id,
-            'color' => 'required|string|max:50|unique:departments,color,' . $id,
+        // Find employee
+        $employee = Employee::with('department', 'user')->findOrFail($id);
+        $userId = $employee->user->id;
+
+        $request->validate([
+            // Employee validations
+            'department_id' => 'required|exists:departments,id',
+            'nik' => 'required|string|max:20|unique:employees,nik,' . $id,
+            'name' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:13',
+            'address' => 'required|string',
+            'date_of_entry' => 'required|date',
+            'date_of_birth' => 'required|date',
+            'position' => 'required|string|max:30',
+            'gender' => 'required|string|in:Pria,Wanita',
+            'employee_status' => 'required|boolean',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+
+            // User validations
+            'user_name' => 'required|string|max:255|unique:users,name,' . $userId,
+            'user_email' => 'required|string|email|max:255|unique:users,email,' . $userId,
+            'user_password' => 'nullable|string|min:8|confirmed',
+            'user_role' => 'required|string|in:user,admin,operator',
         ]);
 
-        $department = Employee::findOrfail($id);
+        // Store profile picture if provided
+        $profilePicturePath = $employee->profile_picture; // Keep existing picture if none provided
+        if ($request->hasFile('profile_picture')) {
+            // Delete the old profile picture from storage if exists
+            if ($profilePicturePath && Storage::exists('public/' . $profilePicturePath)) {
+                Storage::delete('public/' . $profilePicturePath);
+            }
+            $profilePicturePath = $request->file('profile_picture')->store('profile_pictures', 'public');
+        }
 
-        $department->update($validated);
+        // Update employee data
+        $employee->update([
+            'department_id' => $request->department_id,
+            'nik' => $request->nik,
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'date_of_entry' => $request->date_of_entry,
+            'date_of_birth' => $request->date_of_birth,
+            'position' => $request->position,
+            'gender' => $request->gender,
+            'employee_status' => $request->employee_status,
+            'profile_picture' => $profilePicturePath,
+        ]);
 
-        return redirect()->route('department.index')->with('success', 'Departemen berhasil diubah');
+        // Update associated user data
+        $employee->user->update([
+            'name' => $request->user_name,
+            'email' => $request->user_email,
+            'password' => $request->user_password ? Hash::make($request->user_password) : $employee->user->password,
+            'role' => $request->user_role,
+        ]);
+
+        return redirect()->route('employee.index')->with('success', 'Data Karyawan berhasil diperbarui');
     }
 
     /**
