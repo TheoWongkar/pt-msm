@@ -178,7 +178,7 @@
                         <!-- Username -->
                         <div>
                             <label for="user_name" class="block text-sm font-medium text-gray-400">Username</label>
-                            <input type="text" id="user_name" name="user_name"
+                            <input type="text" id="user_name" name="user_name" value="{{ old('user_name') }}"
                                 class="mt-1 w-full p-2 rounded-lg bg-gray-700 border-gray-600 text-gray-200 focus:ring-blue-500 focus:border-blue-500"
                                 required>
                             @error('user_name')
@@ -192,9 +192,12 @@
                                 Karyawan</label>
                             <select id="user_role" name="user_role"
                                 class="mt-1 w-full p-2 rounded-lg bg-gray-700 border-gray-600 text-gray-200 focus:ring-blue-500 focus:border-blue-500">
-                                <option value="user">User</option>
-                                <option value="admin">Admin</option>
-                                <option value="operator">Operator</option>
+                                <option value="user" {{ old('user_role') == 'user' ? 'selected' : '' }}>User
+                                </option>
+                                <option value="admin" {{ old('user_role') == 'admin' ? 'selected' : '' }}>Admin
+                                </option>
+                                <option value="operator" {{ old('user_role') == 'operator' ? 'selected' : '' }}>
+                                    Operator</option>
                             </select>
                             @error('user_role')
                                 <span class="text-sm text-red-500">{{ $message }}</span>
@@ -207,7 +210,7 @@
                         <!-- Email -->
                         <div>
                             <label for="user_email" class="block text-sm font-medium text-gray-400">Email</label>
-                            <input type="email" id="user_email" name="user_email"
+                            <input type="email" id="user_email" name="user_email" value="{{ old('user_email') }}"
                                 class="mt-1 w-full p-2 rounded-lg bg-gray-700 border-gray-600 text-gray-200 focus:ring-blue-500 focus:border-blue-500"
                                 required>
                             @error('user_email')

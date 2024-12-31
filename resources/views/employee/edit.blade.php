@@ -191,12 +191,11 @@
                         <select id="employee_status" name="employee_status"
                             class="mt-1 w-full p-2 rounded-lg bg-gray-700 border-gray-600 text-gray-200 focus:ring-blue-500 focus:border-blue-500">
                             <option value="1"
-                                {{ old('employee_status', $employee->employee_status) == '1' ? 'selected' : '' }}>Aktif
-                            </option>
+                                {{ old('employee_status', $employee->trashed() ? '0' : '1') == '1' ? 'selected' : '' }}>
+                                Aktif</option>
                             <option value="0"
-                                {{ old('employee_status', $employee->employee_status) == '0' ? 'selected' : '' }}>Tidak
-                                Aktif
-                            </option>
+                                {{ old('employee_status', $employee->trashed() ? '0' : '1') == '0' ? 'selected' : '' }}>
+                                Tidak Aktif</option>
                         </select>
                         @error('employee_status')
                             <span class="text-sm text-red-500">{{ $message }}</span>

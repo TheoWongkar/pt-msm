@@ -98,10 +98,10 @@
                         <tr>
                             <th class="px-4 py-2 md:px-6 md:py-3 text-white">Status Karyawan</th>
                             <td class="px-4 py-2 md:px-6 md:py-3 text-xs font-thin">
-                                @if ($employee->employee_status)
-                                    <span class="px-2 py-1 text-white bg-green-500 rounded-full">Aktif</span>
-                                @else
+                                @if ($employee->deleted_at)
                                     <span class="px-2 py-1 text-white bg-red-500 rounded-full">Tidak Aktif</span>
+                                @else
+                                    <span class="px-2 py-1 text-white bg-green-500 rounded-full">Aktif</span>
                                 @endif
                             </td>
                         </tr>

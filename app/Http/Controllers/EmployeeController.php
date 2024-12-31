@@ -57,7 +57,7 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             // Employee validations
             'department_id' => 'required|exists:departments,id',
             'nik' => 'required|string|max:20|unique:employees,nik',
@@ -86,26 +86,29 @@ class EmployeeController extends Controller
 
         // Create employee and associate with the user
         $employee = Employee::create([
-            'department_id' => $request->department_id,
-            'nik' => $request->nik,
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'address' => $request->address,
-            'date_of_entry' => $request->date_of_entry,
-            'date_of_birth' => $request->date_of_birth,
-            'position' => $request->position,
-            'gender' => $request->gender,
-            'employee_status' => $request->employee_status,
+            'department_id' => $validated['department_id'],
+            'nik' => $validated['nik'],
+            'name' => $validated['name'],
+            'phone' => $validated['phone'],
+            'address' => $validated['address'],
+            'date_of_entry' => $validated['date_of_entry'],
+            'date_of_birth' => $validated['date_of_birth'],
+            'position' => $validated['position'],
+            'gender' => $validated['gender'],
             'profile_picture' => $profilePicturePath,
         ]);
 
         // Create user and associate employee
         $employee->user()->create([
-            'name' => $request->user_name,
-            'email' => $request->user_email,
-            'password' => Hash::make($request->user_password),
-            'role' => $request->user_role,
+            'name' => $validated['user_name'],
+            'email' => $validated['user_email'],
+            'password' => Hash::make($validated['user_password']),
+            'role' => $validated['user_role'],
         ]);
+
+        if (!$request->employee_status) {
+            $employee->delete();
+        }
 
         return redirect()->route('employee.index')->with('success', 'Karyawan berhasil ditambahkan');
     }
@@ -125,7 +128,7 @@ class EmployeeController extends Controller
      */
     public function edit(string $id)
     {
-        $employee = Employee::with('user')->findOrFail($id);
+        $employee = Employee::with('user', 'department')->withTrashed()->findOrFail($id);
         $departments = Department::all();
 
         return view('employee.edit', compact('employee', 'departments'));
@@ -137,10 +140,10 @@ class EmployeeController extends Controller
     public function update(Request $request, string $id)
     {
         // Find employee
-        $employee = Employee::with('department', 'user')->findOrFail($id);
+        $employee = Employee::with('user', 'department')->withTrashed()->findOrFail($id);
         $userId = $employee->user->id;
 
-        $request->validate([
+        $validated = $request->validate([
             // Employee validations
             'department_id' => 'required|exists:departments,id',
             'nik' => 'required|string|max:20|unique:employees,nik,' . $id,
@@ -163,15 +166,15 @@ class EmployeeController extends Controller
 
         if ($request->input('reset_profile_picture') === 'true') {
             if ($employee->profile_picture) {
-                Storage::disk('public')->delete($employee->profile_picture); // Hapus gambar lama dari storage
+                Storage::disk('public')->delete($employee->profile_picture);
             }
-            $employee->profile_picture = null; // Set kolom profile_picture ke null
+            $employee->profile_picture = null;
         }
 
         // Jika ada file gambar baru diunggah
         if ($request->hasFile('profile_picture')) {
             if ($employee->profile_picture) {
-                Storage::disk('public')->delete($employee->profile_picture); // Hapus gambar lama dari storage
+                Storage::disk('public')->delete($employee->profile_picture);
             }
             // Simpan gambar baru
             $profilePicturePath = $request->file('profile_picture')->store('profile_pictures', 'public');
@@ -180,26 +183,39 @@ class EmployeeController extends Controller
 
         // Update employee data
         $employee->update([
-            'department_id' => $request->department_id,
-            'nik' => $request->nik,
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'address' => $request->address,
-            'date_of_entry' => $request->date_of_entry,
-            'date_of_birth' => $request->date_of_birth,
-            'position' => $request->position,
-            'gender' => $request->gender,
-            'employee_status' => $request->employee_status,
-            'profile_picture' => $employee->profile_picture,
+            'department_id' => $validated['department_id'],
+            'nik' => $validated['nik'],
+            'name' => $validated['name'],
+            'phone' => $validated['phone'],
+            'address' => $validated['address'],
+            'date_of_entry' => $validated['date_of_entry'],
+            'date_of_birth' => $validated['date_of_birth'],
+            'position' => $validated['position'],
+            'gender' => $validated['gender'],
+            'employee_status' => $validated['employee_status'],
+            'profile_picture' => $employee['profile_picture'],
         ]);
 
         // Update associated user data
         $employee->user->update([
-            'name' => $request->user_name,
-            'email' => $request->user_email,
-            'password' => $request->user_password ? Hash::make($request->user_password) : $employee->user->password,
-            'role' => $request->user_role,
+            'name' => $validated['user_name'],
+            'email' => $validated['user_email'],
+            'password' => $validated['user_password'] ? Hash::make($validated['user_password']) : $employee->user->password,
+            'role' => $validated['user_role'],
         ]);
+
+        // Handle employee status
+        if ($validated['employee_status']) {
+            // Jika status diubah menjadi aktif, restore jika soft deleted
+            if ($employee->trashed()) {
+                $employee->restore();
+            }
+        } else {
+            // Jika status diubah menjadi tidak aktif, soft delete
+            if (!$employee->trashed()) {
+                $employee->delete();
+            }
+        }
 
         return redirect()->route('employee.index')->with('success', 'Data Karyawan berhasil diperbarui');
     }
@@ -209,12 +225,7 @@ class EmployeeController extends Controller
      */
     public function destroy(string $id)
     {
-        $employee = Employee::findOrFail($id);
-
-        if ($employee->profile_picture) {
-            Storage::disk('public')->delete($employee->profile_picture);
-        }
-
+        $employee = Employee::withTrashed()->findOrFail($id);
         $employee->delete();
 
         return redirect()->route('employee.index')->with('success', 'Karyawan berhasil dihapus');
