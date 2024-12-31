@@ -14,16 +14,16 @@ return new class extends Migration
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->foreignId('department_id')->constrained('departments', indexName: 'employees_department_id')->onDelete('cascade');
-            $table->integer('nik')->unique();
+            $table->string('nik', 20)->unique();
             $table->string('name');
-            $table->string('phone')->nullable();
+            $table->string('phone', 20)->nullable();
             $table->string('address');
             $table->date('date_of_birth');
             $table->enum('gender', ['Pria', 'Wanita']);
             $table->string('position');
             $table->date('date_of_entry')->nullable();
-            $table->boolean('employee_status')->default(true);
             $table->string('profile_picture')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

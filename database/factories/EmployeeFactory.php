@@ -31,7 +31,6 @@ class EmployeeFactory extends Factory
             'gender' => fake()->randomElement(['Pria', 'Wanita']),
             'position' => fake()->jobTitle(),
             'date_of_entry' => fake()->date(),
-            'employee_status' => fake()->boolean(),
             'profile_picture' => fake()->imageUrl(400, 400, 'people', true, 'Faker'),
         ];
     }
