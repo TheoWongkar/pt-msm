@@ -37,18 +37,29 @@
             </a>
 
             <!-- Form Pencarian -->
-            <form method="GET" action="#" class="flex items-center w-full md:w-auto">
-                <!-- Container Input dan Button -->
+            <form method="GET" action="{{ route('employee.index') }}" class="flex items-center w-full md:w-auto">
+                <!-- Container untuk Select, Input, dan Button -->
                 <div
-                    class="flex w-full md:w-auto rounded-lg border border-gray-600 focus-within:ring-2 focus-within:ring-blue-300 focus-within:border-blue-500">
+                    class="flex w-full md:w-auto rounded-lg border border-gray-600 focus-within:ring-2 focus-within:ring-blue-300 focus-within:border-blue-500 overflow-hidden">
+                    <!-- Filter Karyawan Aktif/Tidak Aktif -->
+                    <select name="status"
+                        class="h-10 w-24 px-1 bg-blue-500 text-white font-normal border-none focus:ring-0 focus:outline-none">
+                        <option value="" {{ request()->get('status') == 'null' ? 'selected' : '' }}>Status
+                        </option>
+                        <option value="active" {{ request()->get('status') == 'aktif' ? 'selected' : '' }}>Aktif
+                        </option>
+                        <option value="inactive" {{ request()->get('status') == 'tidak_aktif' ? 'selected' : '' }}>
+                            Tidak Aktif</option>
+                    </select>
+
                     <!-- Input Field -->
                     <input type="text" name="search"
-                        class="h-10 px-3 rounded-l-lg bg-gray-700 text-white placeholder-gray-400 flex-grow md:w-56 focus:outline-none"
+                        class="h-10 px-3 bg-gray-700 text-white placeholder-gray-400 flex-grow md:w-56 focus:outline-none"
                         placeholder="Cari Nama Karyawan..." autocomplete="off" value="{{ request()->get('search') }}">
 
                     <!-- Button -->
                     <button type="submit"
-                        class="h-10 p-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600 flex items-center justify-center">
+                        class="h-10 px-4 bg-blue-500 text-white hover:bg-blue-600 flex items-center justify-center focus:outline-none">
                         <!-- SVG Search Icon -->
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="size-5">
@@ -120,10 +131,10 @@
                                 {{ \Carbon\Carbon::parse($employee->date_of_birth)->translatedFormat('d F Y') }}
                             </td>
                             <td class="px-6 py-2 text-center text-xs whitespace-nowrap">
-                                @if ($employee->employee_status)
-                                    <span class="px-3 py-1 text-white bg-green-500 rounded-full">Aktif</span>
-                                @else
+                                @if ($employee->deleted_at)
                                     <span class="px-3 py-1 text-white bg-red-500 rounded-full">Tidak Aktif</span>
+                                @else
+                                    <span class="px-3 py-1 text-white bg-green-500 rounded-full">Aktif</span>
                                 @endif
                             </td>
                             <td class="px-6 py-2 text-center">

@@ -18,15 +18,25 @@ class EmployeeController extends Controller
     {
         $validated = $request->validate([
             'search' => 'nullable|string|max:50',
+            'status' => 'nullable|string|max:50',
         ]);
 
         $search = $validated['search'] ?? null;
+        $status = $validated['status'] ?? null;
 
         $employees = Employee::with('department')
+            ->withTrashed()
             ->when($search, function ($query, $search) {
-                return $query->where('name', 'like', "%{$search}%");
+                return $query->where('name', 'like', '%' . $search . '%');
             })
-            ->orderBy('date_of_entry', 'ASC')
+            ->when($status, function ($query, $status) {
+                if ($status === 'active') {
+                    return $query->whereNull('deleted_at');
+                } elseif ($status === 'inactive') {
+                    return $query->onlyTrashed();
+                }
+            })
+            ->orderBy('name', 'ASC')
             ->paginate(10);
 
         return view('employee.index', compact('employees'));
@@ -105,7 +115,7 @@ class EmployeeController extends Controller
      */
     public function show(string $id)
     {
-        $employee = Employee::with('user', 'department')->findOrFail($id);
+        $employee = Employee::withTrashed()->with('user', 'department')->findOrFail($id);
 
         return view('employee.show', compact('employee'));
     }
