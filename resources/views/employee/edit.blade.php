@@ -74,8 +74,9 @@
 
                     <!-- Foto Profil -->
                     <div x-data="{
-                        previewUrl: '{{ old('profile_picture', asset('storage/' . $employee->profile_picture ?? '')) }}',
-                        isImageChanged: false
+                        previewUrl: '{{ old('profile_picture', $employee->profile_picture ? asset('storage/' . $employee->profile_picture) : '') }}',
+                        isImageChanged: false,
+                        isReset: false
                     }" class="space-y-4">
                         <!-- Label -->
                         <label for="profile_picture" class="block text-sm font-medium text-gray-200">Edit Foto
@@ -86,8 +87,12 @@
                             x-on:change="
                             previewUrl = URL.createObjectURL($event.target.files[0]); 
                             isImageChanged = true;
-                        "
+                            isReset = false;
+                            "
                             class="block w-full text-sm text-gray-200 bg-gray-800 border border-gray-600 rounded-md cursor-pointer file:bg-gray-700 file:border-none file:rounded-md file:px-4 file:py-2 file:text-sm file:font-medium file:text-gray-200 hover:file:bg-gray-600">
+
+                        <!-- Hidden Input for Reset -->
+                        <input type="hidden" name="reset_profile_picture" :value="isReset ? 'true' : 'false'">
 
                         <!-- Error Message -->
                         @error('profile_picture')
@@ -98,9 +103,7 @@
                         <div class="relative group">
                             <!-- Preview Image -->
                             <div x-show="previewUrl" class="w-32 h-32 border border-gray-600 overflow-hidden">
-                                <img :src="isImageChanged ? previewUrl :
-                                    '{{ asset('storage/' . $employee->profile_picture) ?? '' }}'"
-                                    alt="Preview Gambar"
+                                <img :src="previewUrl" alt="Preview Gambar"
                                     class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105">
                             </div>
 
@@ -112,13 +115,14 @@
                         </div>
 
                         <!-- Button Actions -->
-                        <div class="flex items-center">
+                        <div class="flex items-center space-x-4">
+                            <!-- Reset Button -->
                             <button type="button"
                                 x-on:click="
-                                previewUrl = '{{ $user->profile_picture_url ?? '' }}'; 
+                                previewUrl = '';
                                 isImageChanged = false;
-                                $refs.fileInput.value = '';
-                            "
+                                isReset = true;
+                                "
                                 class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-500">
                                 Reset
                             </button>

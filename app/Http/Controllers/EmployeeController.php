@@ -151,12 +151,30 @@ class EmployeeController extends Controller
             'user_role' => 'required|string|in:user,admin,operator',
         ]);
 
+        // if ($request->hasFile('profile_picture')) {
+        //     if ($employee->profile_picture) {
+        //         Storage::disk('public')->delete($employee->profile_picture);
+        //     }
+        //     $profilePicturePath = $request->file('profile_picture')->store('profile_pictures', 'public');
+        //     $employee->profile_picture = $profilePicturePath;
+        // }
+
+        // Jika tombol reset ditekan (misalnya melalui input hidden)
+        if ($request->input('reset_profile_picture') === 'true') {
+            if ($employee->profile_picture) {
+                Storage::disk('public')->delete($employee->profile_picture); // Hapus gambar lama dari storage
+            }
+            $employee->profile_picture = null; // Set kolom profile_picture ke null
+        }
+
+        // Jika ada file gambar baru diunggah
         if ($request->hasFile('profile_picture')) {
             if ($employee->profile_picture) {
-                Storage::disk('public')->delete($employee->profile_picture);
+                Storage::disk('public')->delete($employee->profile_picture); // Hapus gambar lama dari storage
             }
+            // Simpan gambar baru
             $profilePicturePath = $request->file('profile_picture')->store('profile_pictures', 'public');
-            $employee->profile_picture = $profilePicturePath;
+            $employee->profile_picture = $profilePicturePath; // Set kolom profile_picture dengan path baru
         }
 
         // Update employee data
@@ -171,7 +189,7 @@ class EmployeeController extends Controller
             'position' => $request->position,
             'gender' => $request->gender,
             'employee_status' => $request->employee_status,
-            'profile_picture' => $profilePicturePath,
+            'profile_picture' => $employee->profile_picture,
         ]);
 
         // Update associated user data
