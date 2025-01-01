@@ -1,15 +1,20 @@
-<x-layouts.app>
+<x-app-layout>
 
-    <div class="bg-gray-800 rounded-lg shadow-lg p-6">
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row items-start md:items-center justify-between pb-4 border-b border-gray-700">
-            <h2 class="text-white text-lg font-semibold mb-2 md:mb-0">Ubah Data Karyawan</h2>
-            <a href="{{ route('employee.index') }}" class="text-blue-500 hover:underline">Kembali ke Daftar</a>
+    <div class="bg-gray-800 rounded-lg shadow-lg">
+        <div class="py-4 px-4 text-gray-400 bg-gray-900 rounded-t-lg">
+            <h2 class="mb-1 text-white text-lg font-semibold">Data Karyawan</h2>
+            <caption>
+                <h2 class="md:text-justify">
+                    kumpulan informasi terkait individu yang bekerja di sebuah organisasi atau perusahaan. Data ini
+                    biasanya digunakan untuk keperluan administratif, manajemen, atau analisis sumber daya manusia
+                    (SDM).
+                </h2>
+            </caption>
         </div>
 
         <!-- Form -->
         <form action="{{ route('employee.update', $employee->id) }}" method="POST" enctype="multipart/form-data"
-            class="mt-6 space-y-6">
+            class="p-5">
             @csrf
             @method('PUT')
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -292,4 +297,4 @@
         </form>
     </div>
 
-</x-layouts.app>
+</x-app-layout>

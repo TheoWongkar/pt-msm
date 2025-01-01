@@ -1,4 +1,4 @@
-<x-layouts.app>
+<x-app-layout>
 
     <!-- Success Message -->
     @if (session('success'))
@@ -15,10 +15,9 @@
             <h2 class="mb-1 text-white text-lg font-semibold">Data Karyawan</h2>
             <caption>
                 <h2 class="md:text-justify">
-                    Bagian atau unit organisasi yang memiliki tanggung jawab dan tugas khusus untuk mendukung
-                    operasional dan pencapaian tujuan perusahaan. Setiap departemen biasanya memiliki fungsi tertentu
-                    yang berfokus pada area spesifik, dan masing-masing berperan penting dalam kelancaran perusahaan
-                    secara keseluruhan.
+                    kumpulan informasi terkait individu yang bekerja di sebuah organisasi atau perusahaan. Data ini
+                    biasanya digunakan untuk keperluan administratif, manajemen, atau analisis sumber daya manusia
+                    (SDM).
                 </h2>
             </caption>
         </div>
@@ -177,4 +176,4 @@
         </div>
     </div>
 
-</x-layouts.app>
+</x-app-layout>

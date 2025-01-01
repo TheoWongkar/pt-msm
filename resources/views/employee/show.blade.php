@@ -1,4 +1,4 @@
-<x-layouts.app>
+<x-app-layout>
 
     <div class="bg-gray-800 rounded-lg shadow-lg p-6">
         <!-- Header -->
@@ -111,4 +111,4 @@
         </div>
     </div>
 
-</x-layouts.app>
+</x-app-layout>

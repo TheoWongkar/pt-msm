@@ -1,8 +1,8 @@
-<x-layouts.app>
+<x-app-layout>
 
     <div x-cloak class="bg-gray-800 rounded-lg shadow-lg">
         <div class="py-4 px-4 text-gray-400 bg-gray-900 rounded-t-lg">
-            <h2 class="mb-1 text-white text-lg font-semibold">Tambah Departemen</h2>
+            <h2 class="mb-1 text-white text-lg font-semibold">Tambah Data Departemen</h2>
             <caption>
                 <h2 class="md:text-justify">
                     Isi form di bawah untuk menambahkan data departemen baru ke dalam sistem. Pastikan semua data diisi
@@ -46,7 +46,7 @@
                     Batal
                 </a>
                 <button type="submit"
-                    class="h-10 py-2 px-5 bg-green-500 rounded-lg text-white hover:bg-green-600 flex items-center justify-center">
+                    class="h-10 py-2 px-5 bg-blue-500 rounded-lg text-white hover:bg-blue-600 flex items-center justify-center">
                     Simpan
                 </button>
             </div>
@@ -55,4 +55,4 @@
     </div>
 
 
-</x-layouts.app>
+</x-app-layout>

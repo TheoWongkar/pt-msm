@@ -1,9 +1,9 @@
-<x-layouts.guest>
+<x-guest-layout>
 
     <div class="bg-gray-900 flex items-center justify-center min-h-screen px-4 sm:px-0">
         <div class="w-full max-w-md bg-gray-800 rounded-lg shadow-md p-6">
             <!-- Logo -->
-            <img src="img/msm-logo.svg" alt="logo msm" class="mx-auto h-16 md:h-20 mb-1">
+            <x-application-logo class="mx-auto h-16 md:h-20 mb-1"></x-application-logo>
 
             <!-- Text -->
             <h3 class="text-md font-semibold text-center text-gray-400">Sistem Informasi Karyawan</h3>
@@ -51,4 +51,4 @@
         </div>
     </div>
 
-</x-layouts.guest>
+</x-guest-layout>

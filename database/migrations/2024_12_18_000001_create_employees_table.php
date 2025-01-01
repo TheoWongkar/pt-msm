@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('department_id')->constrained('departments', indexName: 'employees_department_id')->onDelete('cascade');
             $table->string('nik', 20)->unique();
             $table->string('name');
-            $table->string('phone', 20)->nullable();
+            $table->string('phone', 13)->nullable();
             $table->string('address');
             $table->date('date_of_birth');
             $table->enum('gender', ['Pria', 'Wanita']);

@@ -1,8 +1,8 @@
-<x-layouts.app>
+<x-app-layout>
 
     <div x-cloak class="bg-gray-800 rounded-lg shadow-lg">
         <div class="py-4 px-4 text-gray-400 bg-gray-900 rounded-t-lg">
-            <h2 class="mb-1 text-white text-lg font-semibold">Edit Departemen</h2>
+            <h2 class="mb-1 text-white text-lg font-semibold">Ubah Data Departemen</h2>
             <caption>
                 <h2 class="md:text-justify">
                     Perbarui informasi departemen dengan mengisi form di bawah ini. Pastikan data yang dimasukkan benar
@@ -48,11 +48,11 @@
                 </a>
                 <button type="submit"
                     class="h-10 py-2 px-5 bg-blue-500 rounded-lg text-white hover:bg-blue-600 flex items-center justify-center">
-                    Perbarui
+                    Simpan
                 </button>
             </div>
         </form>
 
     </div>
 
-</x-layouts.app>
+</x-app-layout>

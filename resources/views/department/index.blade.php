@@ -1,4 +1,4 @@
-<x-layouts.app>
+<x-app-layout>
 
     <!-- Success Message -->
     @if (session('success'))
@@ -131,4 +131,4 @@
         </div>
     </div>
 
-</x-layouts.app>
+</x-app-layout>

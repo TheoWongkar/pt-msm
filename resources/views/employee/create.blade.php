@@ -1,14 +1,19 @@
-<x-layouts.app>
+<x-app-layout>
 
-    <div class="bg-gray-800 rounded-lg shadow-lg p-6">
+    <div class="bg-gray-800 rounded-lg shadow-lg">
         <!-- Header -->
-        <div class="flex flex-col md:flex-row items-start md:items-center justify-between pb-4 border-b border-gray-700">
-            <h2 class="text-white text-lg font-semibold mb-2 md:mb-0">Tambah Data Karyawan</h2>
-            <a href="{{ route('employee.index') }}" class="text-blue-500 hover:underline">Kembali ke Daftar</a>
+        <div class="py-4 px-4 text-gray-400 bg-gray-900 rounded-t-lg">
+            <h2 class="mb-1 text-white text-lg font-semibold">Tambah Data Karyawan</h2>
+            <caption>
+                <h2 class="md:text-justify">
+                    Isi form di bawah untuk menambahkan data karyawan baru ke dalam sistem. Pastikan semua data diisi
+                    dengan benar agar informasi yang disimpan akurat. Data yang sama tidak dapat ditambahkan kembali.
+                </h2>
+            </caption>
         </div>
 
         <!-- Form -->
-        <form action="{{ route('employee.store') }}" method="POST" enctype="multipart/form-data" class="mt-6 space-y-6">
+        <form action="{{ route('employee.store') }}" method="POST" enctype="multipart/form-data" class="p-5">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Kolom Kiri -->
@@ -260,4 +265,4 @@
 
     </div>
 
-</x-layouts.app>
+</x-app-layout>

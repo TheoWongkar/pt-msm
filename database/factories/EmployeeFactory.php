@@ -25,7 +25,7 @@ class EmployeeFactory extends Factory
             'department_id' => Department::inRandomOrder()->first()->id,
             'nik' => fake()->unique()->numberBetween(10000000, 99999999),
             'name' => fake()->name(),
-            'phone' => fake()->phoneNumber(),
+            'phone' => '082100000000',
             'address' => fake()->address(),
             'date_of_birth' => fake()->date(),
             'gender' => fake()->randomElement(['Pria', 'Wanita']),
