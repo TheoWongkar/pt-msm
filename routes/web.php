@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
 
@@ -16,6 +17,8 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+    Route::get('/beranda', DashboardController::class)->name('dashboard');
 
     Route::get('departemen', [DepartmentController::class, 'index'])->name('department.index');
     Route::get('departemen/tambah', [DepartmentController::class, 'create'])->name('department.create');
